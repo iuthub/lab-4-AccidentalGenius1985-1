@@ -15,7 +15,9 @@
 
 <div id="listarea">
     <ul id="musiclist">
-        <?php foreach($mp3Files as $mp3File){
+        <?php
+            if(!isset($_REQUEST['playlist'])){
+            foreach($mp3Files as $mp3File){
             $mp3FileName = basename($mp3File);
             $mp3FileSize = filesize($mp3File);
             if($mp3FileSize < 1024){$mp3FileSize=" (".$mp3FileSize." b)";}
@@ -26,16 +28,35 @@
                 <a href="/webpage/songs/<?=$mp3FileName ?>"> <?=$mp3FileName.$mp3FileSize ?> </a>
 
             </li>
-        <?php }?>
-
-        <?php foreach($txtFiles as $txtFile){
-            $txtFileName = basename($txtFile);
-            ?>
+        <?php }
+            foreach($txtFiles as $txtFile){
+                $txtFileName = basename($txtFile);
+                ?>
             <li class="playlistitem">
-                <a href="/webpage/songs/<?=$txtFileName ?>"> <?=$txtFileName ?> </a>
-
+                <a href="/index.php?playlist=<?=$txtFileName ?>"> <?=$txtFileName ?> </a>
             </li>
-        <?php }?>
+        <?php }
+            }
+            else{
+                $fileWithSongs = fopen("webpage/songs/".$_REQUEST['playlist'],"r");
+                if ($fileWithSongs) {
+                    while (($line = fgets($fileWithSongs)) !== false) {
+                        ?>
+                        <li class="mp3item">
+                            <a href="/webpage/songs/<?=$line ?>"> <?=$line?> </a>
+
+                        </li>
+                        <?php
+                    }
+                    fclose($fileWithSongs);
+                    ?> <li>
+                    <a href="index.php">Back to main menu</a>
+
+                    </li>
+                    <?php
+                }
+            }
+            ?>
     </ul>
 </div>
 
